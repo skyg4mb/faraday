@@ -166,16 +166,14 @@ def validate_email(ctx, param, value):
 @click.option('--email', prompt=True, callback=validate_email)
 @click.option('--password', prompt=True, hide_input=True,
               confirmation_prompt=True)
-def createsuperuser(username, email, password):
+@click.option('--role', prompt=True)
+def createsuperuser(username, email, password, role):
     with app.app_context():
-        if db.session.query(User).filter_by(active=True).count() > 0:
-            print("Can't create more users. The comumunity edition only allows one user. Please contact support for further information.")
-            sys.exit(1)
-
+        
         app.user_datastore.create_user(username=username,
                                        email=email,
                                        password=password,
-                                       role='admin',
+                                       role=role,
                                        is_ldap=False)
         db.session.commit()
         click.echo(click.style(
